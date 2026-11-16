@@ -1,0 +1,2 @@
+export type Status = 'SUPPORTED' | 'CONTRADICTED' | 'MIXED_EVIDENCE' | 'INSUFFICIENT_EVIDENCE' | 'ANALYSIS_UNAVAILABLE';
+export type Verification = { id: string; contentType: 'TEXT' | 'URL' | 'IMAGE' | 'VIDEO' | 'AUDIO'; submittedContent: string; verificationStatus: Status; confidenceScore: number; createdAt: string; analysisResult: { summary: string; limitations: string; claims?: string[] }; evidence: { sourceName: string; sourceUrl: string; evidenceSummary: string; evidenceType: string }[] };

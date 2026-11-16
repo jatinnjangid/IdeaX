@@ -1,0 +1,6 @@
+.auth { display: grid; gap: 10px; margin: 22px 0; }
+.input { width: 100%; border: 1px solid var(--line); background: #0b1916; color: var(--ink); border-radius: 9px; padding: 11px 13px; outline: none; }
+.input:focus { border-color: var(--mint); }
+.ghost { color: var(--muted); }
+.signed-in { border: 1px solid #32634f; background: #10291f; color: #bdeed6; border-radius: 12px; padding: 12px 14px; font-size: 13px; margin: 22px 0; }
+.error { border: 1px solid #7b3437; background: #351b1e; color: #ffc5c0; border-radius: 10px; padding: 10px 13px; font-size: 13px; margin: 0 0 16px; }

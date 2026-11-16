@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+enum ContentType {
+  TEXT
+  URL
+  IMAGE
+  VIDEO
+  AUDIO
+}
+enum VerificationStatus {
+  SUPPORTED
+  CONTRADICTED
+  MIXED_EVIDENCE
+  INSUFFICIENT_EVIDENCE
+  ANALYSIS_UNAVAILABLE
+}
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  passwordHash String @map("password_hash")
+  createdAt DateTime @default(now()) @map("created_at")
+  verifications Verification[]
+  @@map("users")
+}
+model Verification {
+  id String @id @default(cuid())
+  userId String @map("user_id")
+  contentType ContentType @map("content_type")
+  submittedContent String @map("submitted_content")
+  fileUrl String? @map("file_url")
+  verificationStatus VerificationStatus @map("verification_status")
+  confidenceScore Float @map("confidence_score")
+  analysisResult Json @map("analysis_result")
+  createdAt DateTime @default(now()) @map("created_at")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evidence Evidence[]
+  report AnalysisReport?
+  @@index([userId, createdAt])
+  @@map("verifications")
+}
+model Evidence {
+  id String @id @default(cuid())
+  verificationId String @map("verification_id")
+  sourceName String @map("source_name")
+  sourceUrl String @map("source_url")
+  evidenceSummary String @map("evidence_summary")
+  evidenceType String @map("evidence_type")
+  createdAt DateTime @default(now()) @map("created_at")
+  verification Verification @relation(fields: [verificationId], references: [id], onDelete: Cascade)
+  @@map("evidence")
+}
+model AnalysisReport {
+  id String @id @default(cuid())
+  verificationId String @unique @map("verification_id")
+  reportData Json @map("report_data")
+  limitations String
+  createdAt DateTime @default(now()) @map("created_at")
+  verification Verification @relation(fields: [verificationId], references: [id], onDelete: Cascade)
+  @@map("analysis_reports")
+}

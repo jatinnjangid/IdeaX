@@ -1,0 +1,4 @@
+import { NextRequest, NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs'; import { z } from 'zod'; import { prisma } from '@/lib/prisma'; import { createToken } from '@/lib/auth';
+const schema=z.object({email:z.string().email(),password:z.string().min(1)});
+export async function POST(req:NextRequest){try{const data=schema.parse(await req.json());const user=await prisma.user.findUnique({where:{email:data.email}});if(!user || !await bcrypt.compare(data.password,user.passwordHash))return NextResponse.json({error:'Invalid email or password.'},{status:401});const response=NextResponse.json({id:user.id,name:user.name,email:user.email});response.cookies.set('veritas_session',await createToken(user.id),{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',path:'/',maxAge:604800});return response;}catch{return NextResponse.json({error:'Invalid login details.'},{status:400});}}
